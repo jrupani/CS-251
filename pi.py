@@ -77,9 +77,9 @@ def search():      # searches a ball, returns radius and coordinate of its cente
 
     storage = cv.CreateMat(temp_img.width, 1, cv.CV_32FC3)
     
-    try: 
+    try:
         
-        cv2.HoughCircles(processed, storage, cv.CV_HOUGH_GRADIENT, 2, 32.0, HIGH, LOW)
+        cv.HoughCircles(processed, storage, cv.CV_HOUGH_GRADIENT, 2, 32.0, HIGH, LOW)
 
        	'''  If bot confuses in **MANY  BALL  SITUATION** : Do something here (below):
             Presently it scans all circles ( I gave only 1 in it) and keeps the last one
@@ -88,13 +88,14 @@ def search():      # searches a ball, returns radius and coordinate of its cente
             Need not worry about different colored balls, already taken care of in line 66-71
 
         '''
-        for i in range(0, len(np.asarray(storage))):
+        
+        for i in range(0,storage.rows):
         #	print "circle #%d" %i
-            Radius = int(np.asarray(storage)[i][0][2])
-        #	print "Radius= %d" %Radius
-            x = int(np.asarray(storage)[i][0][0])
-            y = int(np.asarray(storage)[i][0][1])
-        #	center = (x, y)
+		Radius = int(np.asarray(storage)[i][0][2])
+		#	print "Radius= %d" %Radius
+		x = int(np.asarray(storage)[i][0][0])
+	       	y = int(np.asarray(storage)[i][0][1])
+		#	center = (x, y)
 
         #    print "Center= %d,%d" %(x,y)
         	# green dot on center and red circle around
@@ -152,14 +153,20 @@ turns=0
 #print "Radius=%d" %Radius
 #print "Center=(%d,%d)" %(x,y)
 
-while(Radius==0 and  turns!=12):  
+while(Radius==0 and turns!=12):  	
     turns+=1
+    
     print "No circlular object detected in this frame. Rotating bot by 30 degrees..."
     # <Saurav> Never got this printed! Code exits with some error. Most probably because of imperfect noise-filtering, and wall on my back is yellow :P
     # Rotate_bot(30) : <Saurav> : I have no idea how to code it. Need to understand GPIO of Raspberry Pi. 
     Radius,x,y =search()
+    if turns==12:
+	del(camera)
+	exit()
+
 
 else:
+    
     while(in_range(Radius,x,y)==0):
         adjust(Radius,x,y)
         time.sleep(0.2) # time delay for bot (presently you are the bot) to move
@@ -167,5 +174,5 @@ else:
 
     else:
         print "Congrats! You have reached destination. Pick it up :D"
-
+    
 del(camera)
