@@ -4,6 +4,6 @@ echo cello
 echo world
 echo jai
 
-a=4
+a=6
 echo $((a**4))
 
